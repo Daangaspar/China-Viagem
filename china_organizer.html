@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="China 2025">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="./manifest.json">
+<title>China 2025</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{--bg:#fff;--bg2:#f5f5f4;--bg3:#eee;--text:#1a1a1a;--text2:#6b6b6b;--text3:#9a9a9a;--border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.2);--info-bg:#e6f1fb;--info-text:#0c447c;--success-bg:#eaf3de;--success-text:#27500a;--warn-bg:#faeeda;--warn-text:#633806;--danger-bg:#fcebeb;--danger-text:#791f1f;--d-bg:#e6f1fb;--d-text:#0c447c;--j-bg:#fbeaf0;--j-text:#4b1528;--r-md:8px;--r-lg:12px}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--text:#f0f0f0;--text2:#aeaeb2;--text3:#636366;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);--info-bg:#042c53;--info-text:#85b7eb;--success-bg:#173404;--success-text:#97c459;--warn-bg:#412402;--warn-text:#fac775;--danger-bg:#501313;--danger-text:#f09595;--d-bg:#042c53;--d-text:#85b7eb;--j-bg:#3d0f1e;--j-text:#f4c0d1}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:15px}
+#root{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;background:var(--bg);box-shadow:0 0 40px rgba(0,0,0,.15)}
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:2rem;gap:1rem;background:var(--bg)}
+#login-screen h1{font-size:22px;font-weight:700}
+#login-screen p{font-size:13px;color:var(--text2);text-align:center;margin-bottom:.5rem}
+.who-btn{width:100%;padding:16px;border-radius:var(--r-lg);border:0.5px solid var(--border2);background:var(--bg2);font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);display:flex;align-items:center;gap:12px}
+.who-btn.d{border-color:var(--d-text);color:var(--d-text)}
+.who-btn.j{border-color:var(--j-text);color:var(--j-text)}
+#header{padding:12px 16px 8px;background:var(--bg);border-bottom:0.5px solid var(--border);flex-shrink:0}
+#header-top{display:flex;justify-content:space-between;align-items:center}
+#trip-name{font-size:16px;font-weight:700}
+.who-pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;cursor:pointer}
+.pill-d{background:var(--d-bg);color:var(--d-text)}
+.pill-j{background:var(--j-bg);color:var(--j-text)}
+#sync-st{font-size:11px;color:var(--text3);margin-top:2px}
+#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 80px}
+.page{display:none}.page.active{display:block}
+#bottom-nav{display:flex;background:var(--bg);border-top:0.5px solid var(--border);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom);overflow-x:auto}
+.ni{flex:0 0 auto;min-width:58px;display:flex;flex-direction:column;align-items:center;padding:8px 4px;cursor:pointer;border:none;background:transparent;color:var(--text2);font-size:9px;gap:3px;font-family:inherit}
+.ni.active{color:var(--text)}.ni svg{width:21px;height:21px}.ni.active svg{stroke-width:2.2}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:10px}
+.ct{font-size:11px;font-weight:700;margin-bottom:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{width:100%;border:0.5px solid var(--border2);border-radius:var(--r-md);padding:9px 10px;font-size:14px;font-family:inherit;background:var(--bg2);color:var(--text);outline:none;-webkit-appearance:none}
+textarea{resize:vertical;min-height:80px}
+.lbl{font-size:12px;color:var(--text2);display:block;margin-bottom:4px}
+.f{margin-bottom:8px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{padding:9px 16px;border-radius:var(--r-md);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:13px;cursor:pointer;font-family:inherit}
+.btnp{background:var(--text);color:var(--bg);border-color:transparent}
+.btnf{width:100%}
+.delbtn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:2px 6px;line-height:1}
+.item{display:flex;align-items:flex-start;gap:8px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.item:last-child{border-bottom:none}
+.ibody{flex:1;min-width:0}
+.itit{font-size:14px;color:var(--text)}
+.isub{font-size:12px;color:var(--text2);margin-top:2px}
+.iico{font-size:20px;flex-shrink:0;margin-top:1px}
+.empty{text-align:center;padding:2rem 0;font-size:13px;color:var(--text3)}
+.sgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.stat{background:var(--bg2);border-radius:var(--r-md);padding:10px}
+.sv{font-size:17px;font-weight:700}.sl{font-size:10px;color:var(--text2);margin-top:2px}
+.stat.sd{background:var(--d-bg)}.stat.sd .sv,.stat.sd .sl{color:var(--d-text)}
+.stat.sj{background:var(--j-bg)}.stat.sj .sv,.stat.sj .sl{color:var(--j-text)}
+.bdg{display:inline-block;font-size:11px;padding:2px 7px;border-radius:99px}
+.ba{background:var(--warn-bg);color:var(--warn-text)}.bt{background:var(--info-bg);color:var(--info-text)}
+.bh{background:var(--success-bg);color:var(--success-text)}.bp{background:#eeedfe;color:#3c3489}
+.bo{background:var(--bg2);color:var(--text2)}.balta{background:var(--danger-bg);color:var(--danger-text)}
+.bmedia{background:var(--warn-bg);color:var(--warn-text)}.bbaixa{background:var(--success-bg);color:var(--success-text)}
+.bd{background:var(--d-bg);color:var(--d-text)}.bj{background:var(--j-bg);color:var(--j-text)}
+.cbdg{display:inline-block;font-size:10px;padding:1px 6px;border-radius:99px;margin-left:4px}
+.ctabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.ctab{padding:5px 12px;border-radius:99px;border:0.5px solid var(--border);font-size:12px;cursor:pointer;background:transparent;color:var(--text2);font-family:inherit}
+.ctab.active{background:var(--bg2);color:var(--text);border-color:var(--border2);font-weight:600}
+.csec{display:none}.csec.active{display:block}
+.fact{border:0.5px solid var(--border);border-radius:var(--r-lg);padding:12px;margin-bottom:8px}
+.fhk{font-size:14px;font-weight:600;margin-bottom:6px}
+.fbody{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:8px}
+.fcopy{padding:5px 12px;border-radius:var(--r-md);border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit}
+.trow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.trow:last-child{border-bottom:none}
+.tico{font-size:20px;flex-shrink:0}.ttit{font-size:13px;font-weight:600;margin-bottom:3px}
+.ttxt{font-size:12px;color:var(--text2);line-height:1.55}
+.phrase{border:0.5px solid var(--border);border-radius:var(--r-lg);padding:12px;margin-bottom:8px}
+.ppt{font-size:14px;font-weight:600;margin-bottom:6px}
+.pzh{font-size:26px;line-height:1.3;margin-bottom:4px}
+.ppy{font-size:13px;color:var(--text2);font-style:italic;margin-bottom:6px}
+.ptip{font-size:12px;color:var(--text2);background:var(--bg2);padding:6px 8px;border-radius:var(--r-md);margin-bottom:8px;line-height:1.5}
+.pbtns{display:flex;gap:6px}
+.pbtn{padding:6px 12px;border-radius:var(--r-md);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:12px;cursor:pointer;font-family:inherit}
+.cvbox{background:var(--bg2);border-radius:var(--r-lg);padding:14px;margin-bottom:10px}
+.cvres{font-size:30px;font-weight:700;padding:8px 0 4px}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ritem{background:var(--bg2);border-radius:var(--r-md);padding:10px}
+.rprice{font-size:13px;font-weight:600}.rlbl{font-size:11px;color:var(--text2);margin-top:2px}
+#map-container{height:340px;border-radius:var(--r-lg);overflow:hidden;border:0.5px solid var(--border);margin-bottom:10px}
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:999;font-size:14px;color:var(--text2)}
+.spin{width:28px;height:28px;border:2.5px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="loading"><div class="spin"></div><div>Conectando...</div></div>
+<div id="login-screen" style="display:none">
+  <div style="font-size:48px">🇨🇳</div>
+  <h1>China 2025</h1>
+  <p>Quem está acessando?</p>
+  <button class="who-btn d" onclick="setUser('Danilo')">👤 Danilo</button>
+  <button class="who-btn j" style="margin-top:8px" onclick="setUser('Julia')">👤 Julia</button>
+</div>
+<div id="root" style="display:none">
+  <div id="header">
+    <div id="header-top">
+      <div id="trip-name">China 2025</div>
+      <span id="who-pill" class="who-pill" onclick="logout()">—</span>
+    </div>
+    <div id="sync-st">conectando...</div>
+  </div>
+  <div id="content">
+    <div id="page-curiosidades" class="page active">
+      <div class="card"><div class="ct">China — fatos para o stories</div><div id="genfacts"></div></div>
+      <div class="card"><div class="ct">Dicas essenciais</div><div id="globaltips"></div></div>
+      <div class="ctabs" id="city-ctabs"></div>
+      <div id="city-secs"></div>
+    </div>
+    <div id="page-roteiro" class="page">
+      <div class="card">
+        <div class="ct">Nova atividade</div>
+        <div class="r2"><div class="f"><label class="lbl">Data</label><input type="date" id="rot-date"></div><div class="f"><label class="lbl">Hora</label><input type="text" id="rot-time" placeholder="09:00"></div></div>
+        <div class="f"><label class="lbl">Atividade</label><input type="text" id="rot-title" placeholder="Ex: Cidade Proibida"></div>
+        <div class="f"><label class="lbl">Cidade</label><select id="rot-city"><option>Pequim</option><option>Xi'an</option><option>Chengdu</option><option>Chongqing</option><option>Zhangjiajie</option><option>Shanghai</option></select></div>
+        <div class="r2"><div class="f"><label class="lbl">Local</label><input type="text" id="rot-place" placeholder="Opcional"></div><div class="f"><label class="lbl">Obs</label><input type="text" id="rot-obs" placeholder="Opcional"></div></div>
+        <button class="btn btnp btnf" onclick="addRoteiro()">+ Adicionar</button>
+      </div>
+      <div id="roteiro-list"></div>
+    </div>
+    <div id="page-gastos" class="page">
+      <div class="sgrid">
+        <div class="stat sd"><div class="sv" id="tot-d">R$ 0</div><div class="sl">Danilo</div></div>
+        <div class="stat sj"><div class="sv" id="tot-j">R$ 0</div><div class="sl">Julia</div></div>
+        <div class="stat"><div class="sv" id="tot-g">R$ 0</div><div class="sl">Total casal</div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Orçamento individual (R$)</div>
+        <div class="r2"><div class="f"><label class="lbl">Danilo</label><input type="number" id="orc-d" placeholder="0"></div><div class="f"><label class="lbl">Julia</label><input type="number" id="orc-j" placeholder="0"></div></div>
+        <button class="btn btnf" onclick="setOrc()">Salvar orçamento</button>
+      </div>
+      <div class="card">
+        <div class="ct">Registrar gasto</div>
+        <div class="f"><label class="lbl">Descrição</label><input type="text" id="g-desc" placeholder="Ex: Jantar hot pot"></div>
+        <div class="r2"><div class="f"><label class="lbl">Valor (R$)</label><input type="number" id="g-val" placeholder="0.00"></div><div class="f"><label class="lbl">Quem pagou</label><select id="g-pess"><option value="Danilo">Danilo</option><option value="Julia">Julia</option></select></div></div>
+        <div class="r2"><div class="f"><label class="lbl">Categoria</label><select id="g-cat"><option value="alimentacao">Alimentação</option><option value="transporte">Transporte</option><option value="hospedagem">Hospedagem</option><option value="passeio">Passeio</option><option value="outro">Outro</option></select></div><div class="f"><label class="lbl">Cidade</label><select id="g-city"><option>Pequim</option><option>Xi'an</option><option>Chengdu</option><option>Chongqing</option><option>Zhangjiajie</option><option>Shanghai</option></select></div></div>
+        <div class="f"><label class="lbl">Data</label><input type="date" id="g-data"></div>
+        <button class="btn btnp btnf" onclick="addGasto()">+ Registrar</button>
+      </div>
+      <div id="gastos-list"></div>
+    </div>
+    <div id="page-mapa" class="page">
+      <div id="map-container"></div>
+      <div class="card">
+        <div class="ct">Adicionar ponto</div>
+        <div class="r2"><div class="f"><label class="lbl">Nome</label><input type="text" id="p-nome" placeholder="Ex: Grande Muralha"></div><div class="f"><label class="lbl">Tipo</label><select id="p-tipo"><option value="🏛️">Histórico</option><option value="🍽️">Restaurante</option><option value="🏨">Hotel</option><option value="🏞️">Natureza</option><option value="📍">Outro</option></select></div></div>
+        <div class="f"><label class="lbl">Endereço / cidade</label><input type="text" id="p-end" placeholder="Para localizar no mapa"></div>
+        <button class="btn btnp btnf" onclick="addPOI()">+ Adicionar ponto</button>
+      </div>
+      <div id="poi-list"></div>
+    </div>
+    <div id="page-tarefas" class="page">
+      <div class="card">
+        <div class="ct">Nova tarefa</div>
+        <div class="f"><input type="text" id="t-txt" placeholder="Ex: Instalar VPN, tirar visto..."></div>
+        <div style="display:flex;gap:8px;margin-top:4px"><select id="t-prio" style="flex:1"><option value="alta">Alta prioridade</option><option value="media" selected>Média</option><option value="baixa">Baixa</option></select><button class="btn btnp" onclick="addTarefa()">+</button></div>
+      </div>
+      <div class="card" id="tarefas-list"><div class="empty">Nenhuma tarefa ainda</div></div>
+    </div>
+    <div id="page-notas" class="page">
+      <div class="card">
+        <div class="ct">Nova nota</div>
+        <div class="f"><input type="text" id="n-tit" placeholder="Título"></div>
+        <div class="f"><textarea id="n-corpo" placeholder="Escreva aqui..."></textarea></div>
+        <button class="btn btnp btnf" onclick="addNota()">+ Salvar</button>
+      </div>
+      <div id="notas-list"></div>
+    </div>
+    <div id="page-conversor" class="page">
+      <div class="card">
+        <div class="ct">Cotação (1 yuan = R$)</div>
+        <div style="display:flex;gap:8px;align-items:center"><input type="number" id="taxa" value="0.76" step="0.001" oninput="updateConv()" style="flex:1"><span style="font-size:12px;color:var(--text2)">Atualize<br>antes de viajar</span></div>
+      </div>
+      <div class="cvbox"><label class="lbl">Yuan (¥) → Reais (R$)</label><input type="number" id="cny-in" placeholder="Quanto em yuan?" oninput="calcDir()"><div class="cvres" id="brl-out">—</div></div>
+      <div class="cvbox"><label class="lbl">Reais (R$) → Yuan (¥)</label><input type="number" id="brl-in" placeholder="Quanto em reais?" oninput="calcInv()"><div class="cvres" id="cny-out">—</div></div>
+      <div class="card"><div class="ct">Referência de preços</div><div class="rgrid" id="ref-grid"></div><div style="font-size:11px;color:var(--text3);margin-top:8px">Valores aproximados convertidos pela cotação acima.</div></div>
+    </div>
+    <div id="page-frasebook" class="page">
+      <div style="background:var(--bg2);border-radius:var(--r-lg);padding:10px 12px;margin-bottom:10px;font-size:12px;color:var(--text2);line-height:1.6">Toque em <strong>ouvir</strong> para pronúncia (offline). Toque em <strong>copiar</strong> para enviar via WeChat.</div>
+      <div class="ctabs" id="frase-ctabs"></div>
+      <div id="frase-secs"></div>
+    </div>
+    <div id="page-horario" class="page">
+      <div class="card" style="text-align:center;padding:24px 16px">
+        <div class="ct">Agora mesmo</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+          <div style="background:var(--d-bg);border-radius:var(--r-lg);padding:20px 12px">
+            <div style="font-size:11px;font-weight:700;color:var(--d-text);margin-bottom:8px">🇧🇷 BRASIL</div>
+            <div id="br-time" style="font-size:36px;font-weight:700;color:var(--d-text);line-height:1">--:--</div>
+            <div id="br-date" style="font-size:12px;color:var(--d-text);margin-top:6px;opacity:.8">--</div>
+          </div>
+          <div style="background:var(--j-bg);border-radius:var(--r-lg);padding:20px 12px">
+            <div style="font-size:11px;font-weight:700;color:var(--j-text);margin-bottom:8px">🇨🇳 CHINA</div>
+            <div id="cn-time" style="font-size:36px;font-weight:700;color:var(--j-text);line-height:1">--:--</div>
+            <div id="cn-date" style="font-size:12px;color:var(--j-text);margin-top:6px;opacity:.8">--</div>
+          </div>
+        </div>
+        <div id="tz-diff" style="margin-top:16px;font-size:13px;color:var(--text2);background:var(--bg2);border-radius:var(--r-md);padding:10px"></div>
+      </div>
+      <div class="card">
+        <div class="ct">Converter horário</div>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center">
+          <div>
+            <label class="lbl">Brasil</label>
+            <input type="time" id="conv-br" oninput="convTZ('br')">
+          </div>
+          <div style="font-size:20px;color:var(--text3);text-align:center;padding-top:16px">⇄</div>
+          <div>
+            <label class="lbl">China</label>
+            <input type="time" id="conv-cn" oninput="convTZ('cn')">
+          </div>
+        </div>
+        <div id="conv-note" style="font-size:12px;color:var(--text2);margin-top:10px;text-align:center"></div>
+      </div>
+      <div class="card">
+        <div class="ct">Tabela rápida — Brasil × China</div>
+        <div id="tz-table"></div>
+      </div>
+    </div>
+  </div>
+  <div id="bottom-nav">
+    <button class="ni active" onclick="showPage('curiosidades',0)" id="nav0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Dicas</button>
+    <button class="ni" onclick="showPage('roteiro',1)" id="nav1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Roteiro</button>
+    <button class="ni" onclick="showPage('gastos',2)" id="nav2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Gastos</button>
+    <button class="ni" onclick="showPage('mapa',3)" id="nav3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Mapa</button>
+    <button class="ni" onclick="showPage('tarefas',4)" id="nav4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tarefas</button>
+    <button class="ni" onclick="showPage('notas',5)" id="nav5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Notas</button>
+    <button class="ni" onclick="showPage('conversor',6)" id="nav6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Moeda</button>
+    <button class="ni" onclick="showPage('frasebook',7)" id="nav7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 0 2 2z"/></svg>Frases</button>
+    <button class="ni" onclick="showPage('horario',8)" id="nav8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Horário</button>
+  </div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getDatabase,ref,set,push,remove,onValue,off}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+// ============================================================
+// 🔧 COLE SUAS CONFIGURAÇÕES DO FIREBASE AQUI
+// ============================================================
+const FC={
+  apiKey:"AIzaSyDtX8taA7NrfHIyWPuHZAyx3f1cJp2Pd5I",
+  authDomain:"chinou-2026-2701.firebaseapp.com",
+  databaseURL:"https://chinou-2026-2701-default-rtdb.firebaseio.com",
+  projectId:"chinou-2026-2701",
+  storageBucket:"chinou-2026-2701.firebasestorage.app",
+  messagingSenderId:"590498469330",
+  appId:"1:590498469330:web:ba170d99f56b4df508240b"
+};
+// ============================================================
+
+const app=initializeApp(FC);
+const db=getDatabase(app);
+
+const CC={'Pequim':{bg:'#e6f1fb',tx:'#0c447c'},"Xi'an":{bg:'#faeeda',tx:'#633806'},'Chengdu':{bg:'#eaf3de',tx:'#27500a'},'Chongqing':{bg:'#fcebeb',tx:'#791f1f'},'Zhangjiajie':{bg:'#eeedfe',tx:'#3c3489'},'Shanghai':{bg:'#fbeaf0',tx:'#4b1528'}};
+const REFS=[{l:'Água (500ml)',c:3},{l:'Refeição simples',c:20},{l:'Hot pot p/ pessoa',c:80},{l:'Metrô (corrida)',c:5},{l:'Táxi (5 km)',c:25},{l:'Café',c:25},{l:'Cerveja local',c:10},{l:'Ingresso museu',c:60},{l:'Trem-bala intercidades',c:250},{l:'Hotel 3★ / noite',c:300}];
+const GF=[
+  {h:'A China tem mais câmeras do que pessoas no Brasil inteiro',b:'São mais de 600 milhões de câmeras — uma para cada 2,3 habitantes. O reconhecimento facial identifica qualquer pessoa em menos de 3 segundos.',i:'600 MILHÕES de câmeras na China. Uma para cada 2,3 habitantes. Reconhecimento facial em menos de 3 segundos. Estamos no futuro (ou no Black Mirror?).'},
+  {h:'O metrô de Shanghai tem mais extensão que todos os metrôs do Brasil juntos',b:'Com 831 km é o maior do mundo. O metrô do Rio tem 42 km.',i:'O metrô de Shanghai tem 831 km. O do Rio tem 42 km. Pra atravessar Shanghai de metrô você viajaria de São Paulo até Campinas.'},
+  {h:'Na China existe um parque temático copiando cidades europeias inteiras',b:'Em Hangzhou existe o "Tianducheng", réplica da Torre Eiffel com 108m e arquitetura parisiense. Os moradores do original só descobriram vendo fotos na internet.',i:'A China construiu uma cópia completa de uma cidade austríaca chamada Hallstatt. Os moradores do original só descobriram quando viram fotos na internet.'},
+  {h:'O país inteiro usa um único fuso horário para 9,6 milhões de km²',b:'No extremo oeste, o sol nasce às 10h da manhã oficialmente — mesma hora de Pequim.',i:'A China tem um fuso horário só pra 9,6 milhões de km². No extremo oeste o sol nasce às 10h. Uma decisão política que afeta o relógio biológico de milhões.'},
+  {h:'O WeChat é literalmente a internet inteira dentro de um app',b:'Pagamento, delivery, transporte, notícias, games — tudo num único superapp.',i:'Na China não existe "baixar vários apps". Existe o WeChat. Pagamento, delivery, Uber, notícias, maps, games — tudo num app só.'},
+];
+const GT=[
+  {i:'🔒',t:'VPN — instale ANTES de embarcar',b:'Google, Instagram, WhatsApp e YouTube não funcionam na China. Baixe ExpressVPN ou NordVPN no Brasil — dentro do país as lojas bloqueiam o download.'},
+  {i:'💳',t:'WeChat Pay — configure antes de sair',b:'A maioria dos comércios usa QR Code. Configure com seu cartão internacional antes da viagem.'},
+  {i:'📶',t:'Chip — compre no aeroporto ou eSIM antes',b:'China Unicom e China Mobile funcionam bem. eSIMs (Airalo, Holafly) evitam troca de chip.'},
+  {i:'📱',t:'Google Translate offline — baixe o pacote mandarim',b:'A câmera traduz menus e placas em tempo real. Funcionalidade essencial.'},
+  {i:'⚡',t:'Adaptador de tomada',b:'China usa tomadas A, C e I. Brasil usa N. Leve adaptador universal.'},
+  {i:'🚄',t:'Trem-bala entre cidades — melhor que avião',b:"Pequim→Xi'an: ~5h a 300 km/h, mais barato, sem fila. Reserve em trip.com (sem VPN)."},
+  {i:'🙏',t:'Etiqueta em templos',b:'Retire o chapéu. Não aponte para imagens religiosas.'},
+  {i:'🥢',t:'Nunca enfie o hashi vertical no arroz',b:'Lembra ritual fúnebre. Apoie horizontalmente na beira do prato.'},
+];
+const CD={
+  'Pequim':{f:[{h:'A Cidade Proibida e o último imperador expulso na marra',b:'O imperador Puyi foi expulso por um general que bateu na porta e disse "você tem que sair". Tinha 18 anos e nunca saíra das muralhas.',i:'O último imperador da China foi expulso quando um general disse "você tem que sair". Tinha 18 anos e nunca tinha saído das muralhas na vida.'},{h:'A Grande Muralha NÃO é visível do espaço — isso é mentira famosa',b:'Astronautas chineses confirmaram. Com 4–8m de largura é pequena demais. Mas tem 21.196 km — daria para cruzar o Brasil 2,5 vezes.',i:'A Grande Muralha NÃO é visível do espaço — astronautas confirmaram. É uma das mentiras mais repetidas. Mas tem 21.196 km — daria para cruzar o Brasil 2,5 vezes.'},{h:'Templo do Céu: um tropeço do imperador podia derrubar um reinado',b:'Uma vez por ano o imperador caminhava em silêncio até o templo. Se tropeçasse, era sinal de que o Céu estava insatisfeito com seu governo.',i:'No Templo do Céu o imperador pedia perdão ao Céu. Se tropeçasse no caminho, era sinal de que o Céu estava insatisfeito. Um tropeço abalar a legitimidade de um império.'}],t:[{i:'🚇',t:'Metrô — use sem hesitar',b:'Rápido, barato, cobre tudo. Compre cartão Yikatong no aeroporto.'},{i:'🧱',t:'Grande Muralha — vá a Mutianyu',b:'Menos gente que Badaling, teleférico, bem preservada.'},{i:'🎟️',t:'Cidade Proibida — reserve online',b:'80.000 pessoas/dia. Reserve em gugong.com.cn.'}],p:[{n:'Cidade Proibida',t:'🏛️',e:'Forbidden City Beijing',o:'980 edifícios, 1420 d.C.',la:39.9163,lo:116.3972},{n:'Grande Muralha — Mutianyu',t:'🏛️',e:'Mutianyu Great Wall Beijing',o:'Melhor trecho, menos turistas',la:40.4319,lo:116.5704},{n:'Praça Tiananmen',t:'🏛️',e:'Tiananmen Square Beijing',o:'Proclamação da República 1949',la:39.9055,lo:116.3976},{n:'Templo do Céu',t:'🏛️',e:'Temple of Heaven Beijing',o:'Ritual imperial da colheita',la:39.8822,lo:116.4066},{n:'Palácio de Verão',t:'🏛️',e:'Summer Palace Beijing',o:'Lago Kunming',la:39.9999,lo:116.2755},{n:'Hutongs Nanluoguxiang',t:'🏛️',e:'Nanluoguxiang Beijing',o:'Vielas históricas séc. XIII',la:39.9368,lo:116.4071}]},
+  "Xi'an":{f:[{h:'O Exército de Terracota foi descoberto por acidente em 1974',b:'Um fazendeiro cavava um poço quando bateu numa cabeça de cerâmica. Foi "recompensado" com emprego de coveiro no museu.',i:'O Exército de Terracota foi descoberto por um fazendeiro cavando um poço em 1974. Ele foi "recompensado" com emprego de coveiro no museu. Só recebeu reconhecimento décadas depois.'},{h:'Só 2% do complexo foi escavado — o túmulo real está intacto',b:'O mausoléu de Qin Shi Huang tem 56 km². Arqueólogos recusam abrir porque não têm tecnologia para preservar sem destruir.',i:'Só 2% do Exército de Terracota foi escavado. O túmulo real tem 56 km² e ninguém abriu — não existe tecnologia para preservar sem destruir.'},{h:"Xi'an foi a maior cidade do mundo por quase 400 anos",b:"Na época Tang, Chang'an tinha 1 milhão de habitantes. Londres tinha menos de 50 mil.",i:"No século VIII Xi'an era a maior cidade do mundo — 1 milhão de habitantes. Londres tinha 50 mil. Era o fim da Rota da Seda."}],t:[{i:'🫔',t:'Rou jia mo — o hambúrguer de 2.500 anos',b:'Existe desde a dinastia Qin. No Bairro Muçulmano custa menos de 15 yuan. Obrigatório.'},{i:'🌙',t:'Bairro Muçulmano — vá de noite',b:'De noite vira outro mundo — luzes, caldeirões, carne na grelha.'},{i:'🚲',t:'Pedalar na muralha',b:'13 km de extensão. Alugue bicicleta e dê a volta completa.'}],p:[{n:'Exército de Terracota',t:'🏛️',e:"Terracotta Army Xi'an",o:'Guerreiros de Qin Shi Huang',la:34.3847,lo:109.2733},{n:"Muralha de Xi'an",t:'🏛️',e:"City Wall Xi'an",o:'Melhor muralha de cidade preservada',la:34.2658,lo:108.9542},{n:"Grande Mesquita de Xi'an",t:'🏛️',e:"Great Mosque Xi'an",o:'Fundada 742 d.C.',la:34.2672,lo:108.9395},{n:'Bairro Muçulmano',t:'🍽️',e:"Muslim Quarter Xi'an",o:'Comida de rua da Rota da Seda',la:34.2680,lo:108.9408},{n:'Torre do Sino',t:'🏛️',e:"Bell Tower Xi'an",o:'Centro histórico, Ming 1384',la:34.2596,lo:108.9476}]},
+  'Chengdu':{f:[{h:"Chengdu é a 'cidade mais feliz da China'",b:"'Se vai a Pequim, quer poder. Se vai a Shanghai, quer dinheiro. Se vai a Chengdu, quer viver.'",i:"'Se você vai para Pequim, quer poder. Se vai para Shanghai, quer dinheiro. Se vai para Chengdu, quer viver.' A expressão que resume a cidade mais descolada da China."},{h:'Os pandas comem 12 horas por dia e quase se extinguiram por isso',b:'Digestão de carnívoro mas come bambu. Precisa de até 38 kg por dia. A base de Chengdu é o motivo de eles ainda existirem.',i:'O panda-gigante tem estômago de lobo mas come bambu, que quase não tem nutriente. A base de Chengdu é o motivo de eles ainda existirem.'},{h:'Sanxingdui: civilização de 3.000 anos que não aparece em nenhum livro',b:'Máscaras de bronze com olhos saltados e árvores de ouro encontradas a 80 km de Chengdu. Ninguém sabe quem eram.',i:'A 80 km de Chengdu existe uma civilização com 3.000 anos que ninguém sabe quem era. Máscaras de bronze com olhos saltados. Não aparece em nenhum livro.'}],t:[{i:'🌶️',t:'Hot pot — cuidado com a pimenta Sichuan',b:'"Málà" não só arde — adormece a boca. Peça "micro là" (微辣).'},{i:'🐼',t:'Base do Panda — chegue às 8h',b:'Pandas ativos de manhã. Depois das 10h dormem e a multidão aumenta.'},{i:'🏛️',t:'Sanxingdui — vale o dia',b:'80 km de Chengdu. Museu reformado com salas novas de 2021.'}],p:[{n:'Base do Panda-Gigante',t:'🏞️',e:'Giant Panda Base Chengdu',o:'Chegue às 8h',la:30.7319,lo:104.1406},{n:'Templo de Wuhou',t:'🏛️',e:'Wuhou Temple Chengdu',o:'Reino de Shu Han',la:30.6414,lo:104.0436},{n:'Museu Sanxingdui',t:'🏛️',e:'Sanxingdui Museum Guanghan',o:'Civilização misteriosa',la:31.0071,lo:104.3618},{n:'Beco de Kuanzhai',t:'🏛️',e:'Kuanzhai Alley Chengdu',o:'Vielas dinastia Qing',la:30.6746,lo:104.0592}]},
+  'Chongqing':{f:[{h:'Metrô que passa dentro de um prédio residencial',b:'A linha 2 passa pelos andares 6 e 7 de apartamentos em Liziba. Moradores ouvem o trem pela janela.',i:'Chongqing tem uma linha de metrô que passa pelo 6º e 7º andar de um prédio. Moradores ouvem o trem pela janela de casa. Não é Photoshop.'},{h:'Chongqing tem um museu dedicado ao hot pot',b:'A disputa com Chengdu sobre quem inventou o hot pot é levada como eleição. "Sem hot pot, não é Chongqing."',i:'Chongqing tem um museu dedicado ao hot pot. A disputa com Chengdu é levada a sério como eleição.'},{h:'"Maior cidade do mundo" — mas é estatística enganosa',b:'32 milhões na área administrativa incluem montanhas e zonas rurais do tamanho de um estado.',i:'Chongqing aparece como "maior cidade do mundo" com 32 milhões. O truque: inclui montanhas e zonas rurais do tamanho de um estado brasileiro.'}],t:[{i:'🚡',t:'Teleférico sobre o Yangtzé',b:'Custa menos de R$1 e tem vista incrível.'},{i:'🌃',t:'Hongyadong à noite',b:'As casas de palafita se transformam com luzes refletindo no rio.'},{i:'🥵',t:'Hot pot mais forte que em Chengdu',b:'Avise o garçom que é estrangeiro se não quiser sofrer.'}],p:[{n:'Cidade Antiga de Ciqikou',t:'🏛️',e:'Ciqikou Ancient Town Chongqing',o:'Vila Ming/Qing',la:29.5659,lo:106.4327},{n:'Hongyadong',t:'🏛️',e:'Hongyadong Chongqing',o:'Melhor à noite',la:29.5643,lo:106.5776},{n:'Metrô no prédio — Liziba',t:'📍',e:'Liziba Station Chongqing',o:'Metrô dentro de apartamentos',la:29.5638,lo:106.5320},{n:'Cruzeiro pelo Yangtzé',t:'🏞️',e:'Yangtze River Chongqing',o:'Partida para as Três Gargantas',la:29.5627,lo:106.5527}]},
+  'Zhangjiajie':{f:[{h:'As colunas se formaram há 380 milhões de anos no fundo do mar',b:'Foi fundo oceânico no Devoniano. Erosão de milhões de anos esculpiu as colunas verticais.',i:'As montanhas "flutuantes" de Zhangjiajie eram o fundo do mar há 380 milhões de anos. Você está vendo o passado geológico da Terra.'},{h:'Uma coluna foi renomeada por causa do Avatar',b:'Antes era "Montanha Qiankun". Após o filme o governo renomeou para "Montanha Hallelujah". Turismo subiu 60%.',i:'A coluna mais famosa foi renomeada para "Montanha Hallelujah" depois do Avatar. O turismo subiu 60% num ano.'},{h:'A ponte de vidro fechou 13 dias depois de abrir',b:'Em 2016 recebeu 80.000 pessoas em 13 dias — o triplo da capacidade.',i:'A ponte de vidro mais alta do mundo foi fechada 13 dias depois de abrir. 80.000 pessoas em 13 dias — o triplo do limite.'}],t:[{i:'🌫️',t:'Névoa é amiga, não inimiga',b:'Manhãs nubladas criam o visual mais icônico — colunas emergindo da neblina.'},{i:'📅',t:'Mínimo 2 dias no parque',b:'480 km² com trilhas, teleférico, trem panorâmico.'},{i:'🕐',t:'Teleférico de Tianmen — compre na véspera',b:'O mais longo do mundo (7,5 km) esgota.'}],p:[{n:'Parque Nacional Zhangjiajie',t:'🏞️',e:'Zhangjiajie National Forest Park',o:'Colunas do Avatar',la:29.3259,lo:110.4350},{n:'Montanha Hallelujah',t:'🏞️',e:'Southern Sky Column Zhangjiajie',o:'A coluna do filme',la:29.3194,lo:110.4417},{n:'Tianmen Mountain',t:'🏞️',e:'Tianmen Mountain Zhangjiajie',o:'Portão do Céu, 1518m',la:29.0644,lo:110.4787},{n:'Ponte de Vidro',t:'🏞️',e:'Zhangjiajie Glass Bridge',o:'300m de altura',la:29.1822,lo:110.4344}]},
+  'Shanghai':{f:[{h:'Pudong era campo de arroz em 1990',b:'Toda a skyline futurista construída em 30 anos. A Shanghai Tower (632m) foi erguida em 7 anos.',i:'A skyline de Pudong era campo de arroz em 1990. Em 30 anos construíram o que a Europa levou séculos.'},{h:'O PCCh foi fundado num sobrado do Bairro Francês',b:'Em 1921, 13 delegados incluindo Mao fundaram o Partido Comunista numa concessão colonial europeia.',i:'O Partido Comunista Chinês foi fundado em 1921 num sobrado do Bairro Francês. O partido que governaria 1,4 bilhão nasceu dentro de uma concessão colonial europeia.'},{h:'Shanghai tem mais arranha-céus que NY, Chicago e LA juntos',b:'Mais de 3.000 edifícios acima de 100 metros. A Sagrada Família leva 140 anos. A Shanghai Tower, 7.',i:'Shanghai tem mais arranha-céus que New York, Chicago e LA juntos. A Sagrada Família está em construção há 140 anos. A Shanghai Tower foi feita em 7.'}],t:[{i:'🌃',t:'Bund à noite > Bund de dia',b:'As torres se iluminam e o reflexo no rio é outro nível. Vá entre 19h e 21h.'},{i:'🚄',t:'Trem-maglev do aeroporto',b:'431 km/h em 7 minutos. ~US$9. Único do mundo em operação.'},{i:'🏘️',t:'Concessão Francesa',b:'Ruas Wukang, Fuxing e Anfu — plátanos, cafés, livrarias.'}],p:[{n:'O Bund',t:'🏛️',e:'The Bund Shanghai',o:'Melhor à noite',la:31.2400,lo:121.4901},{n:'Jardim Yuyuan',t:'🏛️',e:'Yu Garden Shanghai',o:'Jardim clássico Ming',la:31.2271,lo:121.4922},{n:'Concessão Francesa',t:'🏛️',e:'French Concession Shanghai',o:'Melhor bairro para caminhar',la:31.2178,lo:121.4603},{n:'Skyline de Pudong',t:'🏛️',e:'Oriental Pearl Tower Shanghai',o:'Campo de arroz em 1990',la:31.2397,lo:121.4998},{n:'Museu de Shanghai',t:'🏛️',e:'Shanghai Museum',o:'Melhor acervo imperial',la:31.2296,lo:121.4739}]}
+};
+const FR={
+  'Básico':[{pt:'Olá',zh:'你好',py:'Nǐ hǎo',s:'"Ni Hao"',tip:'Cumprimento universal.'},{pt:'Obrigado',zh:'谢谢',py:'Xièxiè',s:'"Shiê-Shiê"',tip:'O "x" soa como "sh" suave.'},{pt:'Desculpe / com licença',zh:'对不起',py:'Duìbuqǐ',s:'"Duei-bu-chi"',tip:'Para desculpas e chamar atenção.'},{pt:'Sim',zh:'是的',py:'Shì de',s:'"Shi-dê"',tip:'"对" (Duei) também é muito usado.'},{pt:'Não',zh:'不',py:'Bù',s:'"Bu"',tip:'Tom descendente, firme.'},{pt:'Não entendo',zh:'我不懂',py:'Wǒ bù dǒng',s:'"Uô bu dong"',tip:'Mais honesto que fingir.'},{pt:'Não falo chinês',zh:'我不会说中文',py:'Wǒ bù huì shuō Zhōngwén',s:'"Uô bu huei shuo Jonguen"',tip:'Mostre o Google Translate depois.'},{pt:'Você fala inglês?',zh:'你会说英语吗？',py:'Nǐ huì shuō Yīngyǔ ma?',s:'"Ni huei shuo Íngu ma?"',tip:'Nas grandes cidades alguém fala.'}],
+  'Restaurante':[{pt:'Mesa para um / dois',zh:'一位／两位',py:'Yī wèi / liǎng wèi',s:'"I uei / Liâng uei"',tip:'Levante os dedos junto.'},{pt:'Uma água',zh:'请给我一杯水',py:'Qǐng gěi wǒ yī bēi shuǐ',s:'"Ching guei uô i bei shuei"',tip:'Água quente é padrão. Fria: "bing shuei".'},{pt:'O cardápio',zh:'菜单，谢谢',py:'Càidān, xièxiè',s:'"Tsai-dan, shiê-shiê"',tip:'Menus com fotos — aponte para pedir.'},{pt:'Quero esse!',zh:'这个！',py:'Zhège!',s:'"Jê-gê!"',tip:'Aponte para a foto ou prato do vizinho.'},{pt:'Sem pimenta / pouca pimenta',zh:'不辣／少辣',py:'Bù là / shǎo là',s:'"Bu la / Shao la"',tip:'Fundamental em Sichuan e Chongqing.'},{pt:'Sou vegetariano',zh:'我吃素',py:'Wǒ chī sù',s:'"Uô chi su"',tip:'"没有肉" (mei iou rou) = sem carne.'},{pt:'A conta!',zh:'买单！',py:'Mǎi dān!',s:'"Mai dan!"',tip:'Levante a mão junto.'},{pt:'Estava delicioso!',zh:'很好吃！',py:'Hěn hǎo chī!',s:'"Hen hao chi!"',tip:'Cozinheiros adoram ouvir.'}],
+  'Transporte':[{pt:'Quanto custa?',zh:'多少钱？',py:'Duōshǎo qián?',s:'"Duo-shao chien?"',tip:'A frase mais útil da viagem.'},{pt:'Me leve para este endereço',zh:'请带我去这个地址',py:'Qǐng dài wǒ qù zhège dìzhǐ',s:'"Ching dai uô chu jê-gê di-ji"',tip:'Mostre o endereço no celular.'},{pt:'Aeroporto',zh:'机场',py:'Jīchǎng',s:'"Ji-tchâng"',tip:'Combine com o nome da cidade.'},{pt:'Estação de trem',zh:'火车站',py:'Huǒchēzhàn',s:'"Huô-tchê-jan"',tip:'"Carro de fogo" literalmente.'},{pt:'Metrô',zh:'地铁站',py:'Dìtiězhàn',s:'"Di-tiê-jan"',tip:'Sinalização em inglês nas grandes cidades.'},{pt:'Para aqui',zh:'请停在这里',py:'Qǐng tíng zài zhèlǐ',s:'"Ching ting zai jê-li"',tip:'Para táxi.'},{pt:'Onde é o banheiro?',zh:'厕所在哪里？',py:'Cèsuǒ zài nǎlǐ?',s:'"Tsê-suô zai na-li?"',tip:'Banheiros públicos são gratuitos.'}],
+  'Hotel':[{pt:'Tenho uma reserva',zh:'我有预订',py:'Wǒ yǒu yùdìng',s:'"Uô iou iu-ding"',tip:'Mostre a confirmação no celular.'},{pt:'Wi-Fi não funciona',zh:'无线网络不工作',py:'Wúxiàn wǎngluò bù gōngzuò',s:'"U-shien uâng-luo bu gong-zuô"',tip:'Precisa de VPN para apps ocidentais.'},{pt:'Senha do Wi-Fi?',zh:'无线密码是什么？',py:'Wúxiàn mìmǎ shì shénme?',s:'"U-shien mi-ma shi shen-me?"',tip:'Geralmente no cartão de boas-vindas.'},{pt:'Mais toalhas?',zh:'可以再给我毛巾吗？',py:'Kěyǐ zài gěi wǒ máojīn ma?',s:'"Kê-i zai guei uô mao-jin ma?"',tip:'"可以...吗" = pedido educado.'}],
+  'Compras':[{pt:'Muito caro!',zh:'太贵了！',py:'Tài guì le!',s:'"Tai guei lê!"',tip:'Boa abertura para barganha.'},{pt:'Pode fazer mais barato?',zh:'能便宜一点吗？',py:'Néng piányí yīdiǎn ma?',s:'"Neng pien-i i-dien ma?"',tip:'Em mercados é esperado.'},{pt:'Vou pensar',zh:'我想想',py:'Wǒ xiǎng xiǎng',s:'"Uô shiang shiang"',tip:'Saída educada.'},{pt:'Aceita WeChat Pay?',zh:'可以用微信支付吗？',py:'Kěyǐ yòng Wēixìn zhīfù ma?',s:'"Kê-i iong Uei-shin ji-fu ma?"',tip:'Na maioria dos lugares: sim.'}],
+  'Emergência':[{pt:'Socorro!',zh:'救命！',py:'Jiùmìng!',s:'"Jiou-ming!"',tip:'Polícia: 110 · Bombeiros: 119 · Ambulância: 120'},{pt:'Preciso de médico',zh:'我需要看医生',py:'Wǒ xūyào kàn yīshēng',s:'"Uô shu-iao kan i-sheng"',tip:'Mostre no celular também.'},{pt:'Chame a polícia',zh:'请叫警察',py:'Qǐng jiào jǐngchá',s:'"Ching jiao jing-tcha"',tip:'Polícia: 110.'},{pt:'Estou perdido',zh:'我迷路了',py:'Wǒ mílù le',s:'"Uô mi-lu lê"',tip:'Mostre o endereço do hotel.'},{pt:'Sou alérgico a…',zh:'我对…过敏',py:'Wǒ duì… guòmǐn',s:'"Uô duei… guô-min"',tip:'Amendoim: 花生 · Frutos do mar: 海鲜'},{pt:'Perdi meu passaporte',zh:'我丢了护照',py:'Wǒ diū le hùzhào',s:'"Uô diou lê hu-jao"',tip:'Consulado: Pequim, Shanghai, Guangzhou.'}]
+};
+
+let CU=localStorage.getItem('china_user')||null;
+let LD={roteiro:[],gastos:[],pois:[],tarefas:[],notas:[],orcamento:{Danilo:0,Julia:0},addedPresets:{}};
+let unsubs=[];
+let map=null;
+
+function dbr(p){return ref(db,'china2025/'+p);}
+function syncCol(path,cb){
+  const r=ref(db,'china2025/'+path);
+  onValue(r,snap=>{const v=snap.val();cb(v?Object.entries(v).map(([id,x])=>({...x,_id:id})):[]); });
+  unsubs.push(()=>off(r));
+}
+function syncVal(path,cb){
+  const r=ref(db,'china2025/'+path);
+  onValue(r,snap=>cb(snap.val()));
+  unsubs.push(()=>off(r));
+}
+function addFB(path,data){return push(ref(db,'china2025/'+path),{...data,_ts:Date.now()});}
+function removeFB(path,id){return remove(ref(db,'china2025/'+path+'/'+id));}
+function setFB(path,val){return set(ref(db,'china2025/'+path),val);}
+
+function setUser(name){
+  CU=name;localStorage.setItem('china_user',name);
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('root').style.display='flex';
+  document.getElementById('loading').style.display='none';
+  const p=document.getElementById('who-pill');p.textContent=name;p.className='who-pill '+(name==='Danilo'?'pill-d':'pill-j');
+  startSync();renderStatic();
+}
+window.setUser=setUser;
+
+function logout(){
+  if(!confirm('Trocar de usuário?'))return;
+  localStorage.removeItem('china_user');unsubs.forEach(u=>u());unsubs=[];CU=null;
+  document.getElementById('root').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+}
+window.logout=logout;
+
+function startSync(){
+  setSS('sincronizando...');
+  syncCol('roteiro',a=>{LD.roteiro=a.sort((a,b)=>((a.date||'')+(a.time||'')).localeCompare((b.date||'')+(b.time||'')));renderRoteiro();setSS('sincronizado');});
+  syncCol('gastos',a=>{LD.gastos=a.sort((a,b)=>b._ts-a._ts);renderGastos();setSS('sincronizado');});
+  syncCol('pois',a=>{LD.pois=a;renderPOI();if(map)initMap();setSS('sincronizado');});
+  syncCol('tarefas',a=>{const o={alta:0,media:1,baixa:2};LD.tarefas=a.sort((a,b)=>o[a.prio]-o[b.prio]);renderTarefas();setSS('sincronizado');});
+  syncCol('notas',a=>{LD.notas=a.sort((a,b)=>b._ts-a._ts);renderNotas();setSS('sincronizado');});
+  syncVal('orcamento',v=>{if(v)LD.orcamento=v;renderGastos();});
+  syncCol('addedPresets',a=>{LD.addedPresets={};a.forEach(x=>LD.addedPresets[x.key]=true);renderCityFacts();});
+}
+function setSS(m){document.getElementById('sync-st').textContent=(m==='sincronizado'?'● ':'◌ ')+m;}
+
+const PAGES=['curiosidades','roteiro','gastos','mapa','tarefas','notas','conversor','frasebook','horario'];
+function showPage(n,i){
+  PAGES.forEach((p,j)=>{document.getElementById('page-'+p).classList.toggle('active',j===i);document.getElementById('nav'+j).classList.toggle('active',j===i);});
+  if(n==='mapa')setTimeout(initMap,200);
+  if(n==='conversor')renderRefs();
+  document.getElementById('content').scrollTo(0,0);
+}
+window.showPage=showPage;
+
+function renderStatic(){renderGF();renderGT();renderCityFacts();renderFrasebook();renderRefs();}
+
+function renderGF(){
+  document.getElementById('genfacts').innerHTML=GF.map(f=>`<div class="fact"><div class="fhk">${f.h}</div><div class="fbody">${f.b}</div><button class="fcopy" onclick="cpTxt(${JSON.stringify(f.i)},this)">copiar legenda insta</button></div>`).join('');
+}
+function renderGT(){
+  document.getElementById('globaltips').innerHTML=GT.map(t=>`<div class="trow"><div class="tico">${t.i}</div><div><div class="ttit">${t.t}</div><div class="ttxt">${t.b}</div></div></div>`).join('');
+}
+function renderCityFacts(){
+  const cities=Object.keys(CD);
+  document.getElementById('city-ctabs').innerHTML=cities.map((c,i)=>`<button class="ctab ${i===0?'active':''}" onclick="showCS('${c}',this)">${c}</button>`).join('');
+  document.getElementById('city-secs').innerHTML=cities.map((c,i)=>`
+    <div id="cs-${c.replace(/['\s]/g,'')}" class="csec ${i===0?'active':''}">
+      <div class="card">
+        <div class="ct">Curiosidades para postar</div>
+        ${CD[c].f.map(f=>`<div class="fact"><div class="fhk">${f.h}</div><div class="fbody">${f.b}</div><button class="fcopy" onclick="cpTxt(${JSON.stringify(f.i)},this)">copiar legenda</button></div>`).join('')}
+        <div class="ct" style="margin-top:12px">Dicas práticas</div>
+        ${CD[c].t.map(t=>`<div class="trow"><div class="tico">${t.i}</div><div><div class="ttit">${t.t}</div><div class="ttxt">${t.b}</div></div></div>`).join('')}
+        <div class="ct" style="margin-top:12px">Pontos no mapa</div>
+        ${CD[c].p.map((p,pi)=>{const key=c+'_'+pi;const added=LD.addedPresets&&LD.addedPresets[key];return`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border)"><span style="font-size:18px">${p.t}</span><div style="flex:1"><div style="font-size:13px;font-weight:600">${p.n}</div><div style="font-size:11px;color:var(--text2)">${p.o}</div></div><button id="pb-${c.replace(/['\s]/g,'')}-${pi}" onclick="addPreset('${c}',${pi})" style="padding:5px 10px;border-radius:var(--r-md);border:0.5px solid var(--border2);background:transparent;color:${added?'var(--success-text)':'var(--text2)'};font-size:11px;cursor:pointer;font-family:inherit;flex-shrink:0">${added?'✓ no mapa':'+ mapa'}</button></div>`;}).join('')}
+      </div>
+    </div>`).join('');
+}
+function showCS(c,btn){
+  document.querySelectorAll('.csec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('#city-ctabs .ctab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('cs-'+c.replace(/['\s]/g,'')).classList.add('active');btn.classList.add('active');
+}
+window.showCS=showCS;
+
+function addRoteiro(){
+  const t=document.getElementById('rot-title').value.trim();if(!t){alert('Preencha a atividade');return;}
+  addFB('roteiro',{date:document.getElementById('rot-date').value,time:document.getElementById('rot-time').value,city:document.getElementById('rot-city').value,title:t,place:document.getElementById('rot-place').value,obs:document.getElementById('rot-obs').value,by:CU});
+  ['rot-date','rot-time','rot-title','rot-place','rot-obs'].forEach(id=>document.getElementById(id).value='');
+}
+window.addRoteiro=addRoteiro;
+function renderRoteiro(){
+  const el=document.getElementById('roteiro-list');
+  if(!LD.roteiro.length){el.innerHTML='<div class="empty">Nenhuma atividade ainda</div>';return;}
+  const g={};LD.roteiro.forEach(r=>{const k=r.date||'s/d';if(!g[k])g[k]=[];g[k].push(r);});
+  el.innerHTML=Object.keys(g).sort().map(d=>`<div class="card"><div class="ct">${d!=='s/d'?fmtD(d):'Sem data'}</div>${g[d].map(r=>{const c=CC[r.city]||{bg:'#f1efe8',tx:'#444'};return`<div class="item"><div class="ibody"><div class="itit">${r.time?`<span style="color:var(--text2);font-size:12px;margin-right:4px">${r.time}</span>`:''}${r.title}${r.city?`<span class="cbdg" style="background:${c.bg};color:${c.tx}">${r.city}</span>`:''}</div>${r.place?`<div class="isub">${r.place}</div>`:''} ${r.obs?`<div class="isub">${r.obs}</div>`:''}<div class="isub">por ${r.by||'—'}</div></div>${r.by===CU?`<button class="delbtn" onclick="removeFB('roteiro','${r._id}')">×</button>`:''}</div>`;}).join('')}</div>`).join('');
+}
+
+function setOrc(){const d=parseFloat(document.getElementById('orc-d').value)||0;const j=parseFloat(document.getElementById('orc-j').value)||0;setFB('orcamento',{Danilo:d,Julia:j});}
+window.setOrc=setOrc;
+function addGasto(){
+  const desc=document.getElementById('g-desc').value.trim();const val=parseFloat(document.getElementById('g-val').value)||0;
+  if(!desc||!val){alert('Preencha descrição e valor');return;}
+  addFB('gastos',{desc,val,pessoa:document.getElementById('g-pess').value,cat:document.getElementById('g-cat').value,city:document.getElementById('g-city').value,data:document.getElementById('g-data').value,by:CU});
+  ['g-desc','g-val','g-data'].forEach(id=>document.getElementById(id).value='');
+}
+window.addGasto=addGasto;
+function renderGastos(){
+  const td=LD.gastos.filter(g=>g.pessoa==='Danilo').reduce((s,g)=>s+g.val,0);
+  const tj=LD.gastos.filter(g=>g.pessoa==='Julia').reduce((s,g)=>s+g.val,0);
+  document.getElementById('tot-d').textContent='R$ '+td.toFixed(2);
+  document.getElementById('tot-j').textContent='R$ '+tj.toFixed(2);
+  document.getElementById('tot-g').textContent='R$ '+(td+tj).toFixed(2);
+  if(LD.orcamento){document.getElementById('orc-d').value=LD.orcamento.Danilo||'';document.getElementById('orc-j').value=LD.orcamento.Julia||'';}
+  const el=document.getElementById('gastos-list');
+  if(!LD.gastos.length){el.innerHTML='<div class="empty">Nenhum gasto registrado</div>';return;}
+  const cats={alimentacao:'ba',transporte:'bt',hospedagem:'bh',passeio:'bp',outro:'bo'};
+  el.innerHTML='<div class="card">'+LD.gastos.map(g=>`<div class="item"><div class="ibody"><div class="itit"><span class="bdg ${cats[g.cat]||'bo'}">${g.cat}</span> <span class="bdg ${g.pessoa==='Danilo'?'bd':'bj'}">${g.pessoa}</span> ${g.desc}</div><div class="isub">${g.city||''}${g.data?' · '+fmtD(g.data):''}</div></div><div style="display:flex;align-items:center;gap:6px"><span style="font-weight:700;font-size:14px;white-space:nowrap">R$ ${g.val.toFixed(2)}</span>${g.by===CU?`<button class="delbtn" onclick="removeFB('gastos','${g._id}')">×</button>`:''}</div></div>`).join('')+'</div>';
+}
+
+function mlnk(p){const q=encodeURIComponent(p.n+(p.e?' '+p.e:''));const ios=/iPad|iPhone|iPod/.test(navigator.userAgent);if(ios&&p.la&&p.lo)return`maps://?daddr=${p.la},${p.lo}&q=${encodeURIComponent(p.n)}`;if(ios)return`maps://?q=${q}`;if(p.la&&p.lo)return`https://www.google.com/maps/dir/?api=1&destination=${p.la},${p.lo}`;return`https://www.google.com/maps/search/?api=1&query=${q}`;}
+function initMap(){
+  if(!map){map=L.map('map-container').setView([32,108],4);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);}
+  map.eachLayer(l=>{if(l instanceof L.Marker)map.removeLayer(l);});
+  LD.pois.filter(p=>p.la&&p.lo).forEach(p=>L.marker([p.la,p.lo]).addTo(map).bindPopup(`<b>${p.t} ${p.n}</b><br><small>${p.o||''}</small>`));
+  const pts=LD.pois.filter(p=>p.la&&p.lo);if(pts.length>1)map.fitBounds(pts.map(p=>[p.la,p.lo]),{padding:[30,30]});
+}
+function addPOI(){
+  const n=document.getElementById('p-nome').value.trim();if(!n){alert('Preencha o nome');return;}
+  const poi={n,t:document.getElementById('p-tipo').value,e:document.getElementById('p-end').value,o:'',la:null,lo:null,by:CU};
+  fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(poi.e||n)+'&limit=1')
+    .then(r=>r.json()).then(d=>{if(d&&d[0]){poi.la=parseFloat(d[0].lat);poi.lo=parseFloat(d[0].lon);}addFB('pois',poi);['p-nome','p-end'].forEach(id=>document.getElementById(id).value='');})
+    .catch(()=>{addFB('pois',poi);['p-nome','p-end'].forEach(id=>document.getElementById(id).value='');});
+}
+window.addPOI=addPOI;
+function renderPOI(){
+  const el=document.getElementById('poi-list');
+  if(!LD.pois.length){el.innerHTML='<div class="empty">Use "+ mapa" nas Dicas ou adicione acima</div>';return;}
+  el.innerHTML='<div class="card">'+LD.pois.map(p=>`<div class="item"><div class="iico">${p.t}</div><div class="ibody"><div class="itit">${p.n}</div>${p.o?`<div class="isub">${p.o}</div>`:''}<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><a href="${mlnk(p)}" style="padding:4px 10px;border-radius:var(--r-md);border:0.5px solid var(--info-text);color:var(--info-text);font-size:11px;text-decoration:none;font-weight:600">🗺 Ir até aqui</a><span style="font-size:11px;color:${p.la?'var(--success-text)':'var(--text3)'};padding:4px 0">${p.la?'coords ok':'sem coord.'}</span></div></div>${p.by===CU?`<button class="delbtn" onclick="removeFB('pois','${p._id}')">×</button>`:''}</div>`).join('')+'</div>';
+}
+function addPreset(c,pi){
+  const key=c+'_'+pi;if(LD.addedPresets&&LD.addedPresets[key])return;
+  const p=CD[c].p[pi];addFB('pois',{n:p.n,t:p.t,e:p.e,o:p.o,la:p.la,lo:p.lo,by:CU});addFB('addedPresets',{key,by:CU});
+  const btn=document.getElementById('pb-'+c.replace(/['\s]/g,'')+'-'+pi);if(btn){btn.textContent='✓ no mapa';btn.style.color='var(--success-text)';}
+}
+window.addPreset=addPreset;
+
+function addTarefa(){const t=document.getElementById('t-txt').value.trim();if(!t)return;addFB('tarefas',{txt:t,prio:document.getElementById('t-prio').value,done:false,by:CU});document.getElementById('t-txt').value='';}
+window.addTarefa=addTarefa;
+function toggleT(id,done){set(ref(db,'china2025/tarefas/'+id+'/done'),!done);}
+window.toggleT=toggleT;
+function renderTarefas(){
+  const el=document.getElementById('tarefas-list');
+  if(!LD.tarefas.length){el.innerHTML='<div class="empty">Nenhuma tarefa ainda</div>';return;}
+  el.innerHTML=LD.tarefas.map(t=>`<div class="item"><input type="checkbox" ${t.done?'checked':''} onchange="toggleT('${t._id}',${t.done})" style="width:18px;height:18px;flex-shrink:0;cursor:pointer;margin-top:1px"><div class="ibody" style="${t.done?'text-decoration:line-through;color:var(--text3)':''}"><div class="itit">${t.txt}</div><div class="isub">por ${t.by||'—'}</div></div><span class="bdg b${t.prio}">${t.prio}</span>${t.by===CU?`<button class="delbtn" onclick="removeFB('tarefas','${t._id}')">×</button>`:''}</div>`).join('');
+}
+
+function addNota(){const t=document.getElementById('n-tit').value.trim();const b=document.getElementById('n-corpo').value.trim();if(!t&&!b)return;addFB('notas',{titulo:t||'Nota',corpo:b,by:CU});document.getElementById('n-tit').value='';document.getElementById('n-corpo').value='';}
+window.addNota=addNota;
+function renderNotas(){
+  const el=document.getElementById('notas-list');
+  if(!LD.notas.length){el.innerHTML='<div class="empty">Nenhuma nota ainda</div>';return;}
+  el.innerHTML=LD.notas.map(n=>`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font-size:14px;font-weight:600">${n.titulo}</div><div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:var(--text3)">por ${n.by||'—'}</span>${n.by===CU?`<button class="delbtn" onclick="removeFB('notas','${n._id}')">×</button>`:''}</div></div><div style="font-size:13px;color:var(--text2);white-space:pre-wrap;line-height:1.6">${n.corpo}</div></div>`).join('');
+}
+
+function getTaxa(){return parseFloat(document.getElementById('taxa').value)||0.76;}
+function calcDir(){const v=parseFloat(document.getElementById('cny-in').value);document.getElementById('brl-out').textContent=isNaN(v)?'—':'R$ '+(v*getTaxa()).toFixed(2);}
+function calcInv(){const v=parseFloat(document.getElementById('brl-in').value);const t=getTaxa();document.getElementById('cny-out').textContent=isNaN(v)||!t?'—':'¥ '+(v/t).toFixed(2);}
+function updateConv(){calcDir();calcInv();renderRefs();}
+function renderRefs(){const t=getTaxa();document.getElementById('ref-grid').innerHTML=REFS.map(r=>`<div class="ritem"><div class="rprice">¥${r.c} = R$ ${(r.c*t).toFixed(2)}</div><div class="rlbl">${r.l}</div></div>`).join('');}
+window.calcDir=calcDir;window.calcInv=calcInv;window.updateConv=updateConv;
+
+function renderFrasebook(){
+  const cats=Object.keys(FR);
+  document.getElementById('frase-ctabs').innerHTML=cats.map((c,i)=>`<button class="ctab ${i===0?'active':''}" onclick="showFC(${i},this)">${c}</button>`).join('');
+  document.getElementById('frase-secs').innerHTML=cats.map((c,i)=>`<div id="fs-${i}" class="csec ${i===0?'active':''}">${FR[c].map(f=>`<div class="phrase"><div class="ppt">${f.pt}</div><div class="pzh">${f.zh}</div><div class="ppy">${f.py} · <strong>${f.s}</strong></div><div class="ptip">${f.tip}</div><div class="pbtns"><button class="pbtn" onclick="speak(${JSON.stringify(f.zh)})">ouvir</button><button class="pbtn" onclick="cpTxt(${JSON.stringify(f.zh)},this)">copiar caractere</button></div></div>`).join('')}</div>`).join('');
+}
+function showFC(i,btn){document.querySelectorAll('#frase-secs .csec').forEach((s,j)=>s.classList.toggle('active',j===i));document.querySelectorAll('#frase-ctabs .ctab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+window.showFC=showFC;
+function speak(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';u.rate=0.85;const v=window.speechSynthesis.getVoices().find(v=>v.lang.startsWith('zh'));if(v)u.voice=v;window.speechSynthesis.speak(u);}
+window.speak=speak;
+
+function cpTxt(t,btn){try{navigator.clipboard.writeText(t);}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}if(btn){const o=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=o,2000);}}
+window.cpTxt=cpTxt;
+function fmtD(iso){if(!iso)return'';const p=iso.split('-');if(p.length!==3)return iso;return p[2]+'/'+p[1]+'/'+p[0];}
+window.removeFB=removeFB;
+
+
+// ---- HORÁRIO ----
+const BR_OFFSET = -3; // BRT (Brasília)
+const CN_OFFSET = 8;  // CST (Beijing)
+const DIFF = CN_OFFSET - BR_OFFSET; // +11h
+
+function fmtTZ(date, offsetH) {
+  const utc = date.getTime() + date.getTimezoneOffset() * 60000;
+  const local = new Date(utc + offsetH * 3600000);
+  const h = String(local.getHours()).padStart(2, '0');
+  const m = String(local.getMinutes()).padStart(2, '0');
+  return { time: h + ':' + m, date: local.toLocaleDateString('pt-BR', {weekday:'short', day:'2-digit', month:'short'}) };
+}
+
+function updateClocks() {
+  const now = new Date();
+  const br = fmtTZ(now, BR_OFFSET);
+  const cn = fmtTZ(now, CN_OFFSET);
+  document.getElementById('br-time').textContent = br.time;
+  document.getElementById('br-date').textContent = br.date;
+  document.getElementById('cn-time').textContent = cn.time;
+  document.getElementById('cn-date').textContent = cn.date;
+  document.getElementById('tz-diff').textContent = 'A China está ' + DIFF + ' horas à frente do Brasil';
+}
+
+function convTZ(from) {
+  const brEl = document.getElementById('conv-br');
+  const cnEl = document.getElementById('conv-cn');
+  const note = document.getElementById('conv-note');
+  if (from === 'br' && brEl.value) {
+    const [h, m] = brEl.value.split(':').map(Number);
+    let cnH = (h + DIFF) % 24;
+    if (cnH < 0) cnH += 24;
+    cnEl.value = String(cnH).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+    const nextDay = (h + DIFF) >= 24;
+    const prevDay = (h + DIFF) < 0;
+    note.textContent = nextDay ? '⚠️ Dia seguinte na China' : prevDay ? '⚠️ Dia anterior na China' : '';
+  } else if (from === 'cn' && cnEl.value) {
+    const [h, m] = cnEl.value.split(':').map(Number);
+    let brH = (h - DIFF + 24) % 24;
+    brEl.value = String(brH).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+    const prevDay = (h - DIFF) < 0;
+    const nextDay = (h - DIFF) >= 24;
+    note.textContent = prevDay ? '⚠️ Dia anterior no Brasil' : nextDay ? '⚠️ Dia seguinte no Brasil' : '';
+  }
+}
+window.convTZ = convTZ;
+
+function buildTZTable() {
+  const el = document.getElementById('tz-table');
+  if (!el) return;
+  const rows = [];
+  const highlights = [0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 21, 23];
+  for (let brH = 0; brH < 24; brH++) {
+    const cnH = (brH + DIFF) % 24;
+    const isNight = brH < 6 || brH >= 22;
+    const isMark = highlights.includes(brH);
+    rows.push(`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border);${isNight?'opacity:.4':''}${isMark?';font-weight:600':''}">
+      <span>🇧🇷 ${String(brH).padStart(2,'0')}:00 ${brH<6||brH>=22?'🌙':brH<12?'🌅':brH<18?'☀️':'🌆'}</span>
+      <span>🇨🇳 ${String(cnH).padStart(2,'0')}:00</span>
+    </div>`);
+  }
+  el.innerHTML = rows.join('');
+}
+
+setInterval(updateClocks, 1000);
+
+if(CU){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('root').style.display='flex';
+  document.getElementById('loading').style.display='none';
+  const p=document.getElementById('who-pill');p.textContent=CU;p.className='who-pill '+(CU==='Danilo'?'pill-d':'pill-j');
+  startSync();renderStatic();
+}else{
+  document.getElementById('loading').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+}
+updateClocks();buildTZTable();
+window.speechSynthesis&&window.speechSynthesis.getVoices();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
