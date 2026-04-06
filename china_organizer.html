@@ -11,38 +11,38 @@
 <title>China 2025</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
-:root{--bg:#fff;--bg2:#f5f5f4;--bg3:#eee;--text:#1a1a1a;--text2:#6b6b6b;--text3:#9a9a9a;--border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.2);--info-bg:#e6f1fb;--info-text:#0c447c;--success-bg:#eaf3de;--success-text:#27500a;--warn-bg:#faeeda;--warn-text:#633806;--danger-bg:#fcebeb;--danger-text:#791f1f;--d-bg:#e6f1fb;--d-text:#0c447c;--j-bg:#fbeaf0;--j-text:#4b1528;--r-md:8px;--r-lg:12px}
-@media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--text:#f0f0f0;--text2:#aeaeb2;--text3:#636366;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);--info-bg:#042c53;--info-text:#85b7eb;--success-bg:#173404;--success-text:#97c459;--warn-bg:#412402;--warn-text:#fac775;--danger-bg:#501313;--danger-text:#f09595;--d-bg:#042c53;--d-text:#85b7eb;--j-bg:#3d0f1e;--j-text:#f4c0d1}}
+:root{--bg:#fffdf8;--bg2:#f8f3eb;--bg3:#ede8df;--text:#1a0a00;--text2:#6b4c30;--text3:#a89070;--border:rgba(139,90,43,.15);--border2:rgba(139,90,43,.3);--info-bg:#e8f0f8;--info-text:#1a4a7a;--success-bg:#e8f5e9;--success-text:#1b5e20;--warn-bg:#fff8e1;--warn-text:#6d4c00;--danger-bg:#fdecea;--danger-text:#7f1c1c;--d-bg:#e8f0f8;--d-text:#1a4a7a;--j-bg:#fdf0f3;--j-text:#7f1c3a;--r-md:8px;--r-lg:14px;--red:#c0392b;--gold:#b8860b}
+@media(prefers-color-scheme:dark){:root{--bg:#1a0f0a;--bg2:#2a1a10;--bg3:#3a2418;--text:#f5ece0;--text2:#c8a882;--text3:#8a6a4a;--border:rgba(200,140,80,.15);--border2:rgba(200,140,80,.3);--info-bg:#0a1f3a;--info-text:#7ab0e0;--success-bg:#0a2010;--success-text:#7ac07a;--warn-bg:#2a1800;--warn-text:#e0b060;--danger-bg:#2a0808;--danger-text:#e07070;--d-bg:#0a1f3a;--d-text:#7ab0e0;--j-bg:#2a0a14;--j-text:#e07090;--red:#e05545;--gold:#d4a420}}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:15px}
 #root{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;background:var(--bg);box-shadow:0 0 40px rgba(0,0,0,.15)}
 #login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:2rem;gap:1rem;background:var(--bg)}
 #login-screen h1{font-size:22px;font-weight:700}
 #login-screen p{font-size:13px;color:var(--text2);text-align:center;margin-bottom:.5rem}
-.who-btn{width:100%;padding:16px;border-radius:var(--r-lg);border:0.5px solid var(--border2);background:var(--bg2);font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);display:flex;align-items:center;gap:12px}
-.who-btn.d{border-color:var(--d-text);color:var(--d-text)}
-.who-btn.j{border-color:var(--j-text);color:var(--j-text)}
-#header{padding:12px 16px 8px;background:var(--bg);border-bottom:0.5px solid var(--border);flex-shrink:0}
+.who-btn{width:100%;padding:16px;border-radius:var(--r-lg);border:1.5px solid var(--border2);background:var(--bg2);font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);display:flex;align-items:center;gap:12px;transition:all .2s;border-left:4px solid currentColor}
+.who-btn.d{border-color:var(--d-text);color:var(--d-text);border-left-color:var(--d-text)}
+.who-btn.j{border-color:var(--j-text);color:var(--j-text);border-left-color:var(--j-text)}
+#header{padding:12px 16px 8px;background:var(--bg);border-bottom:2.5px solid var(--red);flex-shrink:0}
 #header-top{display:flex;justify-content:space-between;align-items:center}
-#trip-name{font-size:16px;font-weight:700}
+#trip-name{font-size:16px;font-weight:700;color:var(--red)}
 .who-pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;cursor:pointer}
 .pill-d{background:var(--d-bg);color:var(--d-text)}
 .pill-j{background:var(--j-bg);color:var(--j-text)}
 #sync-st{font-size:11px;color:var(--text3);margin-top:2px}
-#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 80px}
+#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 100px}
 .page{display:none}.page.active{display:block}
-#bottom-nav{display:flex;background:var(--bg);border-top:0.5px solid var(--border);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom);overflow-x:auto}
-.ni{flex:0 0 auto;min-width:58px;display:flex;flex-direction:column;align-items:center;padding:8px 4px;cursor:pointer;border:none;background:transparent;color:var(--text2);font-size:9px;gap:3px;font-family:inherit}
-.ni.active{color:var(--text)}.ni svg{width:21px;height:21px}.ni.active svg{stroke-width:2.2}
-.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:10px}
-.ct{font-size:11px;font-weight:700;margin-bottom:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+#bottom-nav{display:flex;background:var(--bg);border-top:2.5px solid var(--red);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom);overflow-x:auto;box-shadow:0 -2px 10px rgba(192,57,43,.1)}
+.ni{flex:0 0 auto;min-width:58px;display:flex;flex-direction:column;align-items:center;padding:12px 4px 10px;cursor:pointer;border:none;background:transparent;color:var(--text2);font-size:9px;gap:3px;font-family:inherit}
+.ni.active{color:var(--red)}.ni svg{width:21px;height:21px}.ni.active svg{stroke-width:2.2}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:10px;box-shadow:0 1px 6px rgba(139,90,43,.07)}
+.ct{font-size:11px;font-weight:700;margin-bottom:10px;color:var(--red);text-transform:uppercase;letter-spacing:1px;border-left:3px solid var(--red);padding-left:8px}
 input,select,textarea{width:100%;border:0.5px solid var(--border2);border-radius:var(--r-md);padding:9px 10px;font-size:14px;font-family:inherit;background:var(--bg2);color:var(--text);outline:none;-webkit-appearance:none}
 textarea{resize:vertical;min-height:80px}
 .lbl{font-size:12px;color:var(--text2);display:block;margin-bottom:4px}
 .f{margin-bottom:8px}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .btn{padding:9px 16px;border-radius:var(--r-md);border:0.5px solid var(--border2);background:transparent;color:var(--text);font-size:13px;cursor:pointer;font-family:inherit}
-.btnp{background:var(--text);color:var(--bg);border-color:transparent}
+.btnp{background:var(--red);color:#fff;border-color:transparent;font-weight:600}
 .btnf{width:100%}
 .delbtn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:2px 6px;line-height:1}
 .item{display:flex;align-items:flex-start;gap:8px;padding:10px 0;border-bottom:0.5px solid var(--border)}
@@ -66,9 +66,9 @@ textarea{resize:vertical;min-height:80px}
 .cbdg{display:inline-block;font-size:10px;padding:1px 6px;border-radius:99px;margin-left:4px}
 .ctabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
 .ctab{padding:5px 12px;border-radius:99px;border:0.5px solid var(--border);font-size:12px;cursor:pointer;background:transparent;color:var(--text2);font-family:inherit}
-.ctab.active{background:var(--bg2);color:var(--text);border-color:var(--border2);font-weight:600}
+.ctab.active{background:var(--red);color:#fff;border-color:var(--red);font-weight:600}
 .csec{display:none}.csec.active{display:block}
-.fact{border:0.5px solid var(--border);border-radius:var(--r-lg);padding:12px;margin-bottom:8px}
+.fact{border:1px solid var(--border);border-radius:var(--r-lg);padding:12px;margin-bottom:8px;border-left:3px solid var(--gold)}
 .fhk{font-size:14px;font-weight:600;margin-bottom:6px}
 .fbody{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:8px}
 .fcopy{padding:5px 12px;border-radius:var(--r-md);border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit}
@@ -78,7 +78,7 @@ textarea{resize:vertical;min-height:80px}
 .ttxt{font-size:12px;color:var(--text2);line-height:1.55}
 .phrase{border:0.5px solid var(--border);border-radius:var(--r-lg);padding:12px;margin-bottom:8px}
 .ppt{font-size:14px;font-weight:600;margin-bottom:6px}
-.pzh{font-size:26px;line-height:1.3;margin-bottom:4px}
+.pzh{font-size:26px;line-height:1.3;margin-bottom:4px;color:var(--red)}
 .ppy{font-size:13px;color:var(--text2);font-style:italic;margin-bottom:6px}
 .ptip{font-size:12px;color:var(--text2);background:var(--bg2);padding:6px 8px;border-radius:var(--r-md);margin-bottom:8px;line-height:1.5}
 .pbtns{display:flex;gap:6px}
@@ -97,28 +97,35 @@ textarea{resize:vertical;min-height:80px}
 <body>
 <div id="loading"><div class="spin"></div><div>Conectando...</div></div>
 <div id="login-screen" style="display:none">
-  <div style="font-size:48px">🇨🇳</div>
-  <h1>China 2025</h1>
-  <p>Quem está acessando?</p>
-  <button class="who-btn d" onclick="setUser('Danilo')">👤 Danilo</button>
-  <button class="who-btn j" style="margin-top:8px" onclick="setUser('Julia')">👤 Julia</button>
+  <div style="font-size:52px;filter:drop-shadow(0 2px 8px rgba(192,57,43,.3))">🏮</div>
+  <div style="font-size:22px;color:var(--red);font-weight:700;letter-spacing:4px;margin-bottom:2px">中国 2025</div>
+  <h1 style="font-size:19px;color:var(--text);letter-spacing:1px">China 2025</h1>
+  <p style="margin-bottom:4px">Quem está acessando?</p>
+  <div style="display:flex;align-items:center;gap:8px;width:100%;margin-bottom:8px">
+    <div style="flex:1;height:1px;background:linear-gradient(to right,transparent,var(--border2))"></div>
+    <span style="font-size:14px">🐉</span>
+    <div style="flex:1;height:1px;background:linear-gradient(to left,transparent,var(--border2))"></div>
+  </div>
+  <button class="who-btn d" onclick="setUser('Danilo')">🧭 Danilo</button>
+  <button class="who-btn j" style="margin-top:10px" onclick="setUser('Julia')">🌸 Julia</button>
+  <div style="margin-top:20px;font-size:12px;color:var(--text3);letter-spacing:6px">龙凤呈祥</div>
 </div>
 <div id="root" style="display:none">
   <div id="header">
     <div id="header-top">
-      <div id="trip-name">China 2025</div>
+      <div id="trip-name">🏮 China 2025</div>
       <span id="who-pill" class="who-pill" onclick="logout()">—</span>
     </div>
     <div id="sync-st">conectando...</div>
   </div>
   <div id="content">
-    <div id="page-curiosidades" class="page active">
+    <div id="page-curiosidades" class="page">
       <div class="card"><div class="ct">China — fatos para o stories</div><div id="genfacts"></div></div>
       <div class="card"><div class="ct">Dicas essenciais</div><div id="globaltips"></div></div>
       <div class="ctabs" id="city-ctabs"></div>
       <div id="city-secs"></div>
     </div>
-    <div id="page-roteiro" class="page">
+    <div id="page-roteiro" class="page active">
       <div class="card">
         <div class="ct">Nova atividade</div>
         <div class="r2"><div class="f"><label class="lbl">Data</label><input type="date" id="rot-date"></div><div class="f"><label class="lbl">Hora</label><input type="text" id="rot-time" placeholder="09:00"></div></div>
@@ -230,15 +237,15 @@ textarea{resize:vertical;min-height:80px}
     </div>
   </div>
   <div id="bottom-nav">
-    <button class="ni active" onclick="showPage('curiosidades',0)" id="nav0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Dicas</button>
-    <button class="ni" onclick="showPage('roteiro',1)" id="nav1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Roteiro</button>
-    <button class="ni" onclick="showPage('gastos',2)" id="nav2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Gastos</button>
-    <button class="ni" onclick="showPage('mapa',3)" id="nav3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Mapa</button>
-    <button class="ni" onclick="showPage('tarefas',4)" id="nav4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tarefas</button>
-    <button class="ni" onclick="showPage('notas',5)" id="nav5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Notas</button>
-    <button class="ni" onclick="showPage('conversor',6)" id="nav6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Moeda</button>
-    <button class="ni" onclick="showPage('frasebook',7)" id="nav7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 0 2 2z"/></svg>Frases</button>
-    <button class="ni" onclick="showPage('horario',8)" id="nav8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Horário</button>
+    <button class="ni active" onclick="showPage('roteiro',0)" id="nav0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Roteiro</button>
+    <button class="ni" onclick="showPage('gastos',1)" id="nav1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Gastos</button>
+    <button class="ni" onclick="showPage('mapa',2)" id="nav2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Mapa</button>
+    <button class="ni" onclick="showPage('tarefas',3)" id="nav3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tarefas</button>
+    <button class="ni" onclick="showPage('notas',4)" id="nav4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Notas</button>
+    <button class="ni" onclick="showPage('conversor',5)" id="nav5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Moeda</button>
+    <button class="ni" onclick="showPage('frasebook',6)" id="nav6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 0 2 2z"/></svg>Frases</button>
+    <button class="ni" onclick="showPage('horario',7)" id="nav7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Horário</button>
+    <button class="ni" onclick="showPage('curiosidades',8)" id="nav8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Dicas</button>
   </div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -291,7 +298,7 @@ const CD={
   'Shanghai':{f:[{h:'Pudong era campo de arroz em 1990',b:'Toda a skyline futurista construída em 30 anos. A Shanghai Tower (632m) foi erguida em 7 anos.',i:'A skyline de Pudong era campo de arroz em 1990. Em 30 anos construíram o que a Europa levou séculos.'},{h:'O PCCh foi fundado num sobrado do Bairro Francês',b:'Em 1921, 13 delegados incluindo Mao fundaram o Partido Comunista numa concessão colonial europeia.',i:'O Partido Comunista Chinês foi fundado em 1921 num sobrado do Bairro Francês. O partido que governaria 1,4 bilhão nasceu dentro de uma concessão colonial europeia.'},{h:'Shanghai tem mais arranha-céus que NY, Chicago e LA juntos',b:'Mais de 3.000 edifícios acima de 100 metros. A Sagrada Família leva 140 anos. A Shanghai Tower, 7.',i:'Shanghai tem mais arranha-céus que New York, Chicago e LA juntos. A Sagrada Família está em construção há 140 anos. A Shanghai Tower foi feita em 7.'}],t:[{i:'🌃',t:'Bund à noite > Bund de dia',b:'As torres se iluminam e o reflexo no rio é outro nível. Vá entre 19h e 21h.'},{i:'🚄',t:'Trem-maglev do aeroporto',b:'431 km/h em 7 minutos. ~US$9. Único do mundo em operação.'},{i:'🏘️',t:'Concessão Francesa',b:'Ruas Wukang, Fuxing e Anfu — plátanos, cafés, livrarias.'}],p:[{n:'O Bund',t:'🏛️',e:'The Bund Shanghai',o:'Melhor à noite',la:31.2400,lo:121.4901},{n:'Jardim Yuyuan',t:'🏛️',e:'Yu Garden Shanghai',o:'Jardim clássico Ming',la:31.2271,lo:121.4922},{n:'Concessão Francesa',t:'🏛️',e:'French Concession Shanghai',o:'Melhor bairro para caminhar',la:31.2178,lo:121.4603},{n:'Skyline de Pudong',t:'🏛️',e:'Oriental Pearl Tower Shanghai',o:'Campo de arroz em 1990',la:31.2397,lo:121.4998},{n:'Museu de Shanghai',t:'🏛️',e:'Shanghai Museum',o:'Melhor acervo imperial',la:31.2296,lo:121.4739}]}
 };
 const FR={
-  'Básico':[{pt:'Olá',zh:'你好',py:'Nǐ hǎo',s:'"Ni Hao"',tip:'Cumprimento universal.'},{pt:'Obrigado',zh:'谢谢',py:'Xièxiè',s:'"Shiê-Shiê"',tip:'O "x" soa como "sh" suave.'},{pt:'Desculpe / com licença',zh:'对不起',py:'Duìbuqǐ',s:'"Duei-bu-chi"',tip:'Para desculpas e chamar atenção.'},{pt:'Sim',zh:'是的',py:'Shì de',s:'"Shi-dê"',tip:'"对" (Duei) também é muito usado.'},{pt:'Não',zh:'不',py:'Bù',s:'"Bu"',tip:'Tom descendente, firme.'},{pt:'Não entendo',zh:'我不懂',py:'Wǒ bù dǒng',s:'"Uô bu dong"',tip:'Mais honesto que fingir.'},{pt:'Não falo chinês',zh:'我不会说中文',py:'Wǒ bù huì shuō Zhōngwén',s:'"Uô bu huei shuo Jonguen"',tip:'Mostre o Google Translate depois.'},{pt:'Você fala inglês?',zh:'你会说英语吗？',py:'Nǐ huì shuō Yīngyǔ ma?',s:'"Ni huei shuo Íngu ma?"',tip:'Nas grandes cidades alguém fala.'}],
+  'Básico':[{pt:'Olá',zh:'你好',py:'Nǐ hǎo',s:'"Ni Hao"',tip:'Cumprimento universal.'},{pt:'Obrigado',zh:'谢谢',py:'Xièxiè',s:'"Shiê-Shiê"',tip:'O "x" soa como "sh" suave.'},{pt:'Desculpe / com licença',zh:'对不起',py:'Duìbuqǐ',s:'"Duei-bu-chi"',tip:'Para desculpas e chamar atenção.'},{pt:'Sim',zh:'是的',py:'Shì de',s:'"Shi-dê"',tip:'"对" (Duei) também é muito usado.'},{pt:'Não',zh:'不',py:'Bù',s:'"Bu"',tip:'Tom descendente, firme.'},{pt:'Não entendo',zh:'我不懂',py:'Wǒ bù dǒng',s:'"Uô bu dong"',tip:'Mais honesto que fingir.'},{pt:'Não falo chinês',zh:'我不会说中文',py:'Wǒ bù huì shuō Zhōngwén',s:'"Uô bu huei shuo Jonguen"',tip:'Mostre o Google Translate depois.'},{pt:'Você fala inglês?',zh:'你会说英语吗？',py:'Nǐ huì shuō Yīngyǔ ma?',s:'"Ni huei shuo Íngu ma?"',tip:'Nas grandes cidades alguém fala.'},{pt:'Por favor',zh:'请',py:'Qǐng',s:'"Ching"',tip:'Palavra mágica. Ex: Quero um café, por favor → 请给我一杯咖啡 (Ching guei uô i bei ka-fei) · Quero uma água, por favor → 请给我一杯水 (Ching guei uô i bei shuei)'}],
   'Restaurante':[{pt:'Mesa para um / dois',zh:'一位／两位',py:'Yī wèi / liǎng wèi',s:'"I uei / Liâng uei"',tip:'Levante os dedos junto.'},{pt:'Uma água',zh:'请给我一杯水',py:'Qǐng gěi wǒ yī bēi shuǐ',s:'"Ching guei uô i bei shuei"',tip:'Água quente é padrão. Fria: "bing shuei".'},{pt:'O cardápio',zh:'菜单，谢谢',py:'Càidān, xièxiè',s:'"Tsai-dan, shiê-shiê"',tip:'Menus com fotos — aponte para pedir.'},{pt:'Quero esse!',zh:'这个！',py:'Zhège!',s:'"Jê-gê!"',tip:'Aponte para a foto ou prato do vizinho.'},{pt:'Sem pimenta / pouca pimenta',zh:'不辣／少辣',py:'Bù là / shǎo là',s:'"Bu la / Shao la"',tip:'Fundamental em Sichuan e Chongqing.'},{pt:'Sou vegetariano',zh:'我吃素',py:'Wǒ chī sù',s:'"Uô chi su"',tip:'"没有肉" (mei iou rou) = sem carne.'},{pt:'A conta!',zh:'买单！',py:'Mǎi dān!',s:'"Mai dan!"',tip:'Levante a mão junto.'},{pt:'Estava delicioso!',zh:'很好吃！',py:'Hěn hǎo chī!',s:'"Hen hao chi!"',tip:'Cozinheiros adoram ouvir.'}],
   'Transporte':[{pt:'Quanto custa?',zh:'多少钱？',py:'Duōshǎo qián?',s:'"Duo-shao chien?"',tip:'A frase mais útil da viagem.'},{pt:'Me leve para este endereço',zh:'请带我去这个地址',py:'Qǐng dài wǒ qù zhège dìzhǐ',s:'"Ching dai uô chu jê-gê di-ji"',tip:'Mostre o endereço no celular.'},{pt:'Aeroporto',zh:'机场',py:'Jīchǎng',s:'"Ji-tchâng"',tip:'Combine com o nome da cidade.'},{pt:'Estação de trem',zh:'火车站',py:'Huǒchēzhàn',s:'"Huô-tchê-jan"',tip:'"Carro de fogo" literalmente.'},{pt:'Metrô',zh:'地铁站',py:'Dìtiězhàn',s:'"Di-tiê-jan"',tip:'Sinalização em inglês nas grandes cidades.'},{pt:'Para aqui',zh:'请停在这里',py:'Qǐng tíng zài zhèlǐ',s:'"Ching ting zai jê-li"',tip:'Para táxi.'},{pt:'Onde é o banheiro?',zh:'厕所在哪里？',py:'Cèsuǒ zài nǎlǐ?',s:'"Tsê-suô zai na-li?"',tip:'Banheiros públicos são gratuitos.'}],
   'Hotel':[{pt:'Tenho uma reserva',zh:'我有预订',py:'Wǒ yǒu yùdìng',s:'"Uô iou iu-ding"',tip:'Mostre a confirmação no celular.'},{pt:'Wi-Fi não funciona',zh:'无线网络不工作',py:'Wúxiàn wǎngluò bù gōngzuò',s:'"U-shien uâng-luo bu gong-zuô"',tip:'Precisa de VPN para apps ocidentais.'},{pt:'Senha do Wi-Fi?',zh:'无线密码是什么？',py:'Wúxiàn mìmǎ shì shénme?',s:'"U-shien mi-ma shi shen-me?"',tip:'Geralmente no cartão de boas-vindas.'},{pt:'Mais toalhas?',zh:'可以再给我毛巾吗？',py:'Kěyǐ zài gěi wǒ máojīn ma?',s:'"Kê-i zai guei uô mao-jin ma?"',tip:'"可以...吗" = pedido educado.'}],
@@ -349,7 +356,7 @@ function startSync(){
 }
 function setSS(m){document.getElementById('sync-st').textContent=(m==='sincronizado'?'● ':'◌ ')+m;}
 
-const PAGES=['curiosidades','roteiro','gastos','mapa','tarefas','notas','conversor','frasebook','horario'];
+const PAGES=['roteiro','gastos','mapa','tarefas','notas','conversor','frasebook','horario','curiosidades'];
 function showPage(n,i){
   PAGES.forEach((p,j)=>{document.getElementById('page-'+p).classList.toggle('active',j===i);document.getElementById('nav'+j).classList.toggle('active',j===i);});
   if(n==='mapa')setTimeout(initMap,200);
@@ -368,9 +375,9 @@ function renderGT(){
 }
 function renderCityFacts(){
   const cities=Object.keys(CD);
-  document.getElementById('city-ctabs').innerHTML=cities.map((c,i)=>`<button class="ctab ${i===0?'active':''}" onclick="showCS('${c}',this)">${c}</button>`).join('');
+  document.getElementById('city-ctabs').innerHTML=cities.map((c,i)=>{const k=c.replace(/[^a-zA-Z0-9]/g,'');return`<button class="ctab ${i===0?'active':''}" onclick="showCS('${k}',this)">${c}</button>`;}).join('');
   document.getElementById('city-secs').innerHTML=cities.map((c,i)=>`
-    <div id="cs-${c.replace(/['\s]/g,'')}" class="csec ${i===0?'active':''}">
+    <div id="cs-${c.replace(/[^a-zA-Z0-9]/g,'')}" class="csec ${i===0?'active':''}">
       <div class="card">
         <div class="ct">Curiosidades para postar</div>
         ${CD[c].f.map(f=>`<div class="fact"><div class="fhk">${f.h}</div><div class="fbody">${f.b}</div><button class="fcopy" onclick="cpTxt(${JSON.stringify(f.i)},this)">copiar legenda</button></div>`).join('')}
@@ -384,7 +391,7 @@ function renderCityFacts(){
 function showCS(c,btn){
   document.querySelectorAll('.csec').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#city-ctabs .ctab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('cs-'+c.replace(/['\s]/g,'')).classList.add('active');btn.classList.add('active');
+  document.getElementById('cs-'+c.replace(/[^a-zA-Z0-9]/g,'')).classList.add('active');btn.classList.add('active');
 }
 window.showCS=showCS;
 
@@ -482,10 +489,31 @@ function renderFrasebook(){
 }
 function showFC(i,btn){document.querySelectorAll('#frase-secs .csec').forEach((s,j)=>s.classList.toggle('active',j===i));document.querySelectorAll('#frase-ctabs .ctab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
 window.showFC=showFC;
-function speak(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';u.rate=0.85;const v=window.speechSynthesis.getVoices().find(v=>v.lang.startsWith('zh'));if(v)u.voice=v;window.speechSynthesis.speak(u);}
+function speak(t){
+  if(!('speechSynthesis' in window)){alert('Voz não suportada neste navegador.');return;}
+  const SS=window.speechSynthesis;
+  SS.cancel();
+  const go=()=>{
+    const u=new SpeechSynthesisUtterance(t);
+    u.lang='zh-CN';u.rate=0.85;u.pitch=1;
+    const vv=SS.getVoices();
+    const zh=vv.find(v=>/zh[-_]CN/i.test(v.lang))||vv.find(v=>/^zh/i.test(v.lang));
+    if(zh){u.voice=zh;}
+    SS.speak(u);
+  };
+  const vv=SS.getVoices();
+  if(vv.length){go();}
+  else{SS.onvoiceschanged=()=>{SS.onvoiceschanged=null;go();};setTimeout(go,300);}
+}
 window.speak=speak;
 
-function cpTxt(t,btn){try{navigator.clipboard.writeText(t);}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}if(btn){const o=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=o,2000);}}
+function cpTxt(t,btn){
+  const done=()=>{if(btn){const o=btn.textContent;btn.textContent='✓ copiado!';btn.style.color='var(--success-text,green)';setTimeout(()=>{btn.textContent=o;btn.style.color='';},2000);}};
+  if(navigator.clipboard&&window.isSecureContext){
+    navigator.clipboard.writeText(t).then(done).catch(()=>{legacyCopy(t);done();});
+  }else{legacyCopy(t);done();}
+}
+function legacyCopy(t){const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
 window.cpTxt=cpTxt;
 function fmtD(iso){if(!iso)return'';const p=iso.split('-');if(p.length!==3)return iso;return p[2]+'/'+p[1]+'/'+p[0];}
 window.removeFB=removeFB;
