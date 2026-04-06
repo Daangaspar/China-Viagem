@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="China 2025">
+<meta name="apple-mobile-web-app-title" content="China 2026">
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="./manifest.json">
-<title>China 2025</title>
+<title>China 2026</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 :root{--bg:#fffdf8;--bg2:#f8f3eb;--bg3:#ede8df;--text:#1a0a00;--text2:#6b4c30;--text3:#a89070;--border:rgba(139,90,43,.15);--border2:rgba(139,90,43,.3);--info-bg:#e8f0f8;--info-text:#1a4a7a;--success-bg:#e8f5e9;--success-text:#1b5e20;--warn-bg:#fff8e1;--warn-text:#6d4c00;--danger-bg:#fdecea;--danger-text:#7f1c1c;--d-bg:#e8f0f8;--d-text:#1a4a7a;--j-bg:#fdf0f3;--j-text:#7f1c3a;--r-md:8px;--r-lg:14px;--red:#c0392b;--gold:#b8860b}
@@ -98,8 +98,8 @@ textarea{resize:vertical;min-height:80px}
 <div id="loading"><div class="spin"></div><div>Conectando...</div></div>
 <div id="login-screen" style="display:none">
   <div style="font-size:52px;filter:drop-shadow(0 2px 8px rgba(192,57,43,.3))">🏮</div>
-  <div style="font-size:22px;color:var(--red);font-weight:700;letter-spacing:4px;margin-bottom:2px">中国 2025</div>
-  <h1 style="font-size:19px;color:var(--text);letter-spacing:1px">China 2025</h1>
+  <div style="font-size:22px;color:var(--red);font-weight:700;letter-spacing:4px;margin-bottom:2px">中国 2026</div>
+  <h1 style="font-size:19px;color:var(--text);letter-spacing:1px">China 2026</h1>
   <p style="margin-bottom:4px">Quem está acessando?</p>
   <div style="display:flex;align-items:center;gap:8px;width:100%;margin-bottom:8px">
     <div style="flex:1;height:1px;background:linear-gradient(to right,transparent,var(--border2))"></div>
@@ -113,7 +113,7 @@ textarea{resize:vertical;min-height:80px}
 <div id="root" style="display:none">
   <div id="header">
     <div id="header-top">
-      <div id="trip-name">🏮 China 2025</div>
+      <div id="trip-name">🏮 China 2026</div>
       <span id="who-pill" class="who-pill" onclick="logout()">—</span>
     </div>
     <div id="sync-st">conectando...</div>
@@ -311,20 +311,20 @@ let LD={roteiro:[],gastos:[],pois:[],tarefas:[],notas:[],orcamento:{Danilo:0,Jul
 let unsubs=[];
 let map=null;
 
-function dbr(p){return ref(db,'china2025/'+p);}
+function dbr(p){return ref(db,'china2026/'+p);}
 function syncCol(path,cb){
-  const r=ref(db,'china2025/'+path);
+  const r=ref(db,'china2026/'+path);
   onValue(r,snap=>{const v=snap.val();cb(v?Object.entries(v).map(([id,x])=>({...x,_id:id})):[]); });
   unsubs.push(()=>off(r));
 }
 function syncVal(path,cb){
-  const r=ref(db,'china2025/'+path);
+  const r=ref(db,'china2026/'+path);
   onValue(r,snap=>cb(snap.val()));
   unsubs.push(()=>off(r));
 }
-function addFB(path,data){return push(ref(db,'china2025/'+path),{...data,_ts:Date.now()});}
-function removeFB(path,id){return remove(ref(db,'china2025/'+path+'/'+id));}
-function setFB(path,val){return set(ref(db,'china2025/'+path),val);}
+function addFB(path,data){return push(ref(db,'china2026/'+path),{...data,_ts:Date.now()});}
+function removeFB(path,id){return remove(ref(db,'china2026/'+path+'/'+id));}
+function setFB(path,val){return set(ref(db,'china2026/'+path),val);}
 
 function setUser(name){
   CU=name;localStorage.setItem('china_user',name);
@@ -459,7 +459,7 @@ window.addPreset=addPreset;
 
 function addTarefa(){const t=document.getElementById('t-txt').value.trim();if(!t)return;addFB('tarefas',{txt:t,prio:document.getElementById('t-prio').value,done:false,by:CU});document.getElementById('t-txt').value='';}
 window.addTarefa=addTarefa;
-function toggleT(id,done){set(ref(db,'china2025/tarefas/'+id+'/done'),!done);}
+function toggleT(id,done){set(ref(db,'china2026/tarefas/'+id+'/done'),!done);}
 window.toggleT=toggleT;
 function renderTarefas(){
   const el=document.getElementById('tarefas-list');
