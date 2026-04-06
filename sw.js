@@ -1,8 +1,8 @@
-const CACHE = 'china-viagem-v1';
+const CACHE = 'china-v2';
 const FILES = [
-  './china_organizer.html',
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+  '/China-Viagem/',
+  '/China-Viagem/index.html',
+  '/China-Viagem/manifest.json'
 ];
 
 self.addEventListener('install', e => {
@@ -23,8 +23,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      return cached || fetch(e.request).catch(() => caches.match('./china_organizer.html'));
-    })
+    caches.match(e.request).then(r => r || fetch(e.request))
   );
 });
